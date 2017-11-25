@@ -8,6 +8,9 @@ using System.Text;
 
 namespace WindowsFilter
 {
+    /// <summary>
+    /// List visible windows and send keyboard messages
+    /// </summary>
     public class EnumWindows
     {
         /*
@@ -283,9 +286,11 @@ namespace WindowsFilter
             DWLP_MSGRESULT = 0x0,
             DWLP_DLGPROC = 0x4
         }
+
         [DllImport("user32.dll", SetLastError = true)]
         static extern int GetWindowLong(IntPtr hWnd, int nIndex);
         private delegate bool EnumDelegate(IntPtr hWnd, int lParam);
+
         [DllImport("user32.dll", EntryPoint = "EnumDesktopWindows",
         ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
         private static extern bool EnumDesktopWindows(IntPtr hDesktop,
@@ -307,41 +312,45 @@ namespace WindowsFilter
         private static extern bool _enumWindows(EnumDelegate callback, IntPtr extraData);
 
 
-        List<Process> processlist = new List<Process>();
+        List<Process> processList = new List<Process>();
 
-        /* find all visible windows process and store them to processlist*/
+        
+        /// <summary>
+        /// find all visible windows process and store them to processlist 
+        /// </summary>
+        /// <param name="is_clean"></param>
         public void getProcess(Boolean is_clean = false)
         {
 
             IntPtr current_handle = Process.GetCurrentProcess().MainWindowHandle;
             Process[] process_all = Process.GetProcesses();
             if (is_clean)
-                processlist = new List<Process>();
+                processList = new List<Process>();
             foreach (Process process in process_all)
             {
                 if (!System.String.IsNullOrEmpty(process.MainWindowTitle) && current_handle != process.MainWindowHandle
-                    && !processlist.Exists(p => p.MainWindowTitle == process.MainWindowTitle)
+                    && !processList.Exists(p => p.MainWindowTitle == process.MainWindowTitle)
                     )
 
                 {
-                    processlist.Add(process);
+                    processList.Add(process);
                 }
             }
-            processlist.Sort((a, b) => a.Id - b.Id);
+            processList.Sort((a, b) => a.Id - b.Id);
             /*EnumDelegate a = new EnumDelegate(enumProcessWithWindowsCallBack);
             _enumWindows(a,IntPtr.Zero);*/
         }
 
         public int getSize()
         {
-            return processlist.Count;
+            return processList.Count;
         }
 
         public List<string> getContents()
         {
 
             List<string> s = new List<string>();
-            foreach (Process process in processlist)
+            foreach (Process process in processList)
             {
                 //s.Add(string.Format("{0}", process.MainWindowTitle));
                 try
@@ -359,7 +368,7 @@ namespace WindowsFilter
         }
         public IntPtr getHandle(int index)
         {
-            return processlist[index].MainWindowHandle;
+            return processList[index].MainWindowHandle;
 
         }
         public void setToFront(IntPtr handle)
@@ -391,7 +400,6 @@ namespace WindowsFilter
 
 
         }
-
         public void setFullscreen(int index, int screen_dx, int screen_dy)
         {
             IntPtr handle = getHandle(index);

@@ -17,18 +17,25 @@ namespace WindowsFilter
         public MainWindow()
         {
             InitializeComponent();
-            set_full_screen();
+            setFullScreen();
 
         }
-        public void set_full_screen()
+        /// <summary>
+        /// Set main window full screen and update UI
+        /// </summary>
+        public void setFullScreen()
         {
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
-            update_windows();
-            update_UI();
+            updateWindowsList();
+            updateUI();
 
         }           
-        private void update_windows(Boolean is_clean=false)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="is_clean">whether clear the previous result. This is useful when open several pdf files together while EnumWindows can only return the main window (last one with focus) </param>
+        private void updateWindowsList(Boolean is_clean=false)
         {
             enumwindows.getProcess(is_clean);
             List<String> s = enumwindows.getContents();
@@ -38,102 +45,105 @@ namespace WindowsFilter
                 listView1.Items.Add(s_);
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void refreshBtnClick(object sender, EventArgs e)
         {
-            update_windows();
+            updateWindowsList();
         }        
-        private void update_image()
+        /// <summary>
+        /// show the image of selected windows to imageBox
+        /// </summary>
+        private void showTargetImage()
         {
-            if (selected_index>=0 && selected_index<enumwindows.getSize())
+            if (selectedIndex>=0 && selectedIndex<enumwindows.getSize())
             {
                
-                Bitmap win_bitmap = WindowsBitmap.PrintWindow(enumwindows.getHandle(selected_index));
-                win_bitmap = WindowsBitmap.unsafe_expand(win_bitmap,BinaryThreshold,false,dx,dx);
+                Bitmap win_bitmap = WindowsBitmap.grabWindowBitmap(enumwindows.getHandle(selectedIndex));
+                win_bitmap = WindowsBitmap.unsafeExpand(win_bitmap,binaryThreshold,false,dx,dx);
                 pictureBox1.Image = win_bitmap;
             }
         }
-        private int selected_index = -1;
+        private int selectedIndex = -1;
 
 
-        private void update_parameters()
+        private void updateRatio()
         {
 
 
-            WindowsBitmap.ratio_x = WindowsBitmap.ratio_x0 * print_bitmap_ration;
-            WindowsBitmap.ratio_y = WindowsBitmap.ratio_y0 * print_bitmap_ration;
-            update_UI();
+            WindowsBitmap.ratio_x = WindowsBitmap.ratio_x0 * printBitmapRatio;
+            WindowsBitmap.ratio_y = WindowsBitmap.ratio_y0 * printBitmapRatio;
+            updateUI();
         }
-        private void update_labels()
+        private void updateLabels()
         {
             if (pictureBox1.Image != null)
                 label1.Text = String.Format("({0},{1})->({2},{3})", this.Width, this.Height, pictureBox1.Image.Width, pictureBox1.Image.Height);
             else
                 label1.Text = String.Format("({0},{1}) ", this.Width, this.Height);
-            label2.Text = String.Format("{0}", BinaryThreshold);
-            label3.Text = String.Format("{0}", print_bitmap_ration);
-            label5.Text = String.Format("Index:{0}", selected_index);
+            label2.Text = String.Format("{0}", binaryThreshold);
+            label3.Text = String.Format("{0}", printBitmapRatio);
+            label5.Text = String.Format("Index:{0}", selectedIndex);
             label6.Text = String.Format("{0}", dx);
 
             label8.Text = String.Format("{0}", screen_dx);
             label9.Text = String.Format("{0}", screen_dy);
         }
-        private void update_UI()
+        private void updateUI()
         {
 
-            update_image();
-            update_labels();
+            showTargetImage();
+            updateLabels();
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void previousPageClicked(object sender, EventArgs e)
         {
             if (listView1.SelectedIndices.Count > 0)
             {
                 int index = listView1.SelectedIndices[0];
                 enumwindows.sendMessage(index, "prior");
-                update_image();
+                showTargetImage();
                 //update_image_fully();
                 //enumwindows.setToFront(Process.GetCurrentProcess().MainWindowHandle);
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void nextPageClicked(object sender, EventArgs e)
         {
             if (listView1.SelectedIndices.Count > 0)
             {
                 int index = listView1.SelectedIndices[0];
                 enumwindows.sendMessage(index, "next");
-                update_image();
+                showTargetImage();
                
             }
         }
-        private void button5_Click(object sender, EventArgs e)
+        private void addThreshold(object sender, EventArgs e)
         {
-            BinaryThreshold = BinaryThreshold + 10;
-            update_parameters();
+            binaryThreshold = binaryThreshold + 10;
+            updateRatio();
         }
-        private void button6_Click(object sender, EventArgs e)
+        private void decreaseThreshold(object sender, EventArgs e)
         {
-            BinaryThreshold = BinaryThreshold - 10;
-            update_parameters();
-        }
-
-        public int BinaryThreshold = 170;
-        public double print_bitmap_ration = 1.0;
-
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-            print_bitmap_ration = print_bitmap_ration + 0.01;
-            update_parameters();
+            binaryThreshold = binaryThreshold - 10;
+            updateRatio();
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        public int binaryThreshold = 170;
+        public double printBitmapRatio = 1.0;
+
+
+        private void addPrintRatio(object sender, EventArgs e)
         {
-            print_bitmap_ration = print_bitmap_ration - 0.01;
-            update_parameters();
+            printBitmapRatio = printBitmapRatio + 0.01;
+            updateRatio();
         }
-        private void toggle_visibility(Control parent)
+
+        private void decreasePrintRatio(object sender, EventArgs e)
+        {
+            printBitmapRatio = printBitmapRatio - 0.01;
+            updateRatio();
+        }
+        private void toggleVisibility(Control parent)
         {
             foreach (Control c in parent.Controls)
             {
@@ -143,93 +153,96 @@ namespace WindowsFilter
                 }
                 else
                 {
-                    toggle_visibility(c);
+                    toggleVisibility(c);
                 }
             }
         }
-        private void toggle_visibility()
+        /// <summary>
+        /// change Visibility for auxillary GUI
+        /// </summary>
+        private void toggleVisibility()
         {
-            toggle_visibility(this);
+            toggleVisibility(this);
             if (listView1.Visible)
-                update_windows();
+                updateWindowsList();
             
         }
-        private void toggle_other_controls()
+        private void toggleOtherControls()
         {
-            toggle_visibility();   
-            update_UI();
+            toggleVisibility();   
+            updateUI();
 
         }
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void pictureBoxClick(object sender, EventArgs e)
         {
             if(!IsCursor_show)
             Cursor.Show();
             IsCursor_show = true;
             timer1.Enabled = true;
-            toggle_other_controls();
+            toggleOtherControls();
            
 
         }
-        private void handle_keymap(KeyEventArgs e)
+        private void dispatchKeyMsg(KeyEventArgs e)
         {
-            if (selected_index >= 0 && selected_index < enumwindows.getSize())
+            if (selectedIndex >= 0 && selectedIndex < enumwindows.getSize())
             {
 
-                enumwindows.sendKeyPress(selected_index, e);
+                enumwindows.sendKeyPress(selectedIndex, e);
                 label4.Text = String.Format("Key:{0}", e.KeyCode.ToString());
-                update_image();
+                showTargetImage();
 
             }
 
         }
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        private void mainWindownKeyDown(object sender, KeyEventArgs e)
         {
-            handle_keymap(e);
+            dispatchKeyMsg(e);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void largeAddRatio(object sender, EventArgs e)
         {
-            print_bitmap_ration = print_bitmap_ration + 0.1;
-            update_parameters();
+            printBitmapRatio = printBitmapRatio + 0.1;
+            updateRatio();
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void largeDecreaseRatio(object sender, EventArgs e)
         {
-            print_bitmap_ration = print_bitmap_ration - 0.1;
-            update_parameters();
+            printBitmapRatio = printBitmapRatio - 0.1;
+            updateRatio();
         }
 
-        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        private void listViewKeyDown(object sender, KeyEventArgs e)
         {
-            handle_keymap(e);
+            dispatchKeyMsg(e);
         }
 
-        private void listView1_Click(object sender, EventArgs e)
+        private void listViewClick(object sender, EventArgs e)
         {
             if (listView1.SelectedIndices.Count > 0)
             {
-                selected_index = listView1.SelectedIndices[0];
-                this.Text = String.Format("!{0}", listView1.Items[selected_index].Text);
+                selectedIndex = listView1.SelectedIndices[0];
+                this.Text = String.Format("!{0}", listView1.Items[selectedIndex].Text);
             }
-            update_image();
-            update_labels();
+            showTargetImage();
+            updateLabels();
 
         }
 
         private int dx = 2;
         private int dx_max = 6;
-        private void button11_Click(object sender, EventArgs e)
+        private void decreaseBoldness(object sender, EventArgs e)
         {
             if (dx >0)
                 dx = dx - 1;
-            update_UI();
+            updateUI();
         }
 
-        private void button12_Click(object sender, EventArgs e)
+        private void increaseBoldness(object sender, EventArgs e)
         {
             if (dx < dx_max)
                 dx = dx + 1;
-            update_UI();
+            updateUI();
         }
         bool IsCursor_show = true;
         private void timer1_Tick(object sender, EventArgs e)
@@ -242,11 +255,11 @@ namespace WindowsFilter
 
         private void button13_Click(object sender, EventArgs e)
         {
-            if (selected_index >= 0 && selected_index < enumwindows.getSize())
+            if (selectedIndex >= 0 && selectedIndex < enumwindows.getSize())
             {
 
-                enumwindows.setFullscreen(selected_index,screen_dx,screen_dy);
-                update_image();
+                enumwindows.setFullscreen(selectedIndex,screen_dx,screen_dy);
+                showTargetImage();
             }
         }
 
@@ -266,33 +279,33 @@ namespace WindowsFilter
         {
             if (screen_dx <100)
                 screen_dx = screen_dx + 1;
-            update_labels();
+            updateLabels();
         }
 
         private void button18_Click(object sender, EventArgs e)
         {
             if (screen_dx > 0)
                 screen_dx = screen_dx - 1;
-            update_labels();
+            updateLabels();
         }
 
         private void button15_Click(object sender, EventArgs e)
         {
             if (screen_dy <100)
                 screen_dy = screen_dy + 1;
-            update_labels();
+            updateLabels();
         }
 
         private void button17_Click(object sender, EventArgs e)
         {
             if (screen_dy> 0)
                 screen_dy= screen_dy - 1;
-            update_labels();
+            updateLabels();
         }
 
         private void button19_Click(object sender, EventArgs e)
         {
-            update_windows(true);
+            updateWindowsList(true);
         }
     }
 }
