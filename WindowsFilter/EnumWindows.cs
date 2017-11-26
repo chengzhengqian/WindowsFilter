@@ -1,11 +1,8 @@
 ﻿using System.Diagnostics;
-
 using System.Collections.Generic;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Text;
-
 namespace WindowsFilter
 {
     /// <summary>
@@ -60,127 +57,57 @@ namespace WindowsFilter
             ASYNCWINDOWPOS = 0x4000;
         }
         /// <summary>
-            ///     Special window handles
-            /// </summary>
+        ///     Special window handles
+        /// </summary>
         public enum SpecialWindowHandles
         {
-            // ReSharper disable InconsistentNaming
-            /// <summary>
-                    ///     Places the window at the top of the Z order.
-                    /// </summary>
+            
             HWND_TOP = 0,
-            /// <summary>
-                    ///     Places the window at the bottom of the Z order. If the hWnd parameter identifies a topmost window, the window loses its topmost status and is placed at the bottom of all other windows.
-                    /// </summary>
+           
             HWND_BOTTOM = 1,
-            /// <summary>
-                    ///     Places the window above all non-topmost windows. The window maintains its topmost position even when it is deactivated.
-                    /// </summary>
+           
             HWND_TOPMOST = -1,
-            /// <summary>
-                    ///     Places the window above all non-topmost windows (that is, behind all topmost windows). This flag has no effect if the window is already a non-topmost window.
-                    /// </summary>
+          
             HWND_NOTOPMOST = -2
-            // ReSharper restore InconsistentNaming
+          
         }
 
         [Flags]
         public enum SetWindowPosFlags : uint
         {
-            // ReSharper disable InconsistentNaming
-
-            /// <summary>
-                    ///     If the calling thread and the thread that owns the window are attached to different input queues, the system posts the request to the thread that owns the window. This prevents the calling thread from blocking its execution while other threads process the request.
-                    /// </summary>
+           
             SWP_ASYNCWINDOWPOS = 0x4000,
 
-            /// <summary>
-                    ///     Prevents generation of the WM_SYNCPAINT message.
-                    /// </summary>
             SWP_DEFERERASE = 0x2000,
-
-            /// <summary>
-                    ///     Draws a frame (defined in the window's class description) around the window.
-                    /// </summary>
+    
             SWP_DRAWFRAME = 0x0020,
 
-            /// <summary>
-                    ///     Applies new frame styles set using the SetWindowLong function. Sends a WM_NCCALCSIZE message to the window, even if the window's size is not being changed. If this flag is not specified, WM_NCCALCSIZE is sent only when the window's size is being changed.
-                    /// </summary>
             SWP_FRAMECHANGED = 0x0020,
 
-            /// <summary>
-                    ///     Hides the window.
-                    /// </summary>
             SWP_HIDEWINDOW = 0x0080,
 
-            /// <summary>
-                    ///     Does not activate the window. If this flag is not set, the window is activated and moved to the top of either the topmost or non-topmost group (depending on the setting of the hWndInsertAfter parameter).
-                    /// </summary>
             SWP_NOACTIVATE = 0x0010,
 
-            /// <summary>
-                    ///     Discards the entire contents of the client area. If this flag is not specified, the valid contents of the client area are saved and copied back into the client area after the window is sized or repositioned.
-                    /// </summary>
             SWP_NOCOPYBITS = 0x0100,
 
-            /// <summary>
-                    ///     Retains the current position (ignores X and Y parameters).
-                    /// </summary>
             SWP_NOMOVE = 0x0002,
 
-            /// <summary>
-                    ///     Does not change the owner window's position in the Z order.
-                    /// </summary>
             SWP_NOOWNERZORDER = 0x0200,
 
-            /// <summary>
-                    ///     Does not redraw changes. If this flag is set, no repainting of any kind occurs. This applies to the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent window uncovered as a result of the window being moved. When this flag is set, the application must explicitly invalidate or redraw any parts of the window and parent window that need redrawing.
-                    /// </summary>
             SWP_NOREDRAW = 0x0008,
 
-            /// <summary>
-                    ///     Same as the SWP_NOOWNERZORDER flag.
-                    /// </summary>
             SWP_NOREPOSITION = 0x0200,
 
-            /// <summary>
-                    ///     Prevents the window from receiving the WM_WINDOWPOSCHANGING message.
-                    /// </summary>
             SWP_NOSENDCHANGING = 0x0400,
 
-            /// <summary>
-                    ///     Retains the current size (ignores the cx and cy parameters).
-                    /// </summary>
             SWP_NOSIZE = 0x0001,
 
-            /// <summary>
-                    ///     Retains the current Z order (ignores the hWndInsertAfter parameter).
-                    /// </summary>
             SWP_NOZORDER = 0x0004,
 
-            /// <summary>
-                    ///     Displays the window.
-                    /// </summary>
             SWP_SHOWWINDOW = 0x0040,
 
-            // ReSharper restore InconsistentNaming
         }
 
-
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-        [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-        [DllImport("user32.dll")]
-        public static extern IntPtr PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-        [DllImport("user32.dll")]
-        public static extern int SetForegroundWindow(IntPtr hWnd);
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr SetFocus(IntPtr hWnd);
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
         public abstract class WindowStyles
         {
             public const uint WS_OVERLAPPED = 0x00000000;
@@ -212,9 +139,9 @@ namespace WindowsFilter
 
             // Common Window Styles
 
-            public const uint WS_OVERLAPPEDWINDOW =(WS_OVERLAPPED |WS_CAPTION |WS_SYSMENU |WS_THICKFRAME |WS_MINIMIZEBOX |WS_MAXIMIZEBOX);
+            public const uint WS_OVERLAPPEDWINDOW = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 
-            public const uint WS_POPUPWINDOW =(WS_POPUP |WS_BORDER |WS_SYSMENU);
+            public const uint WS_POPUPWINDOW = (WS_POPUP | WS_BORDER | WS_SYSMENU);
 
             public const uint WS_CHILDWINDOW = WS_CHILD;
 
@@ -262,17 +189,6 @@ namespace WindowsFilter
             public const uint WS_EX_NOACTIVATE = 0x08000000;
             //#endif /* _WIN32_WINNT >= 0x0500 */
         }
-
-        /// <summary>
-        /// Changes an attribute of the specified window. The function also sets the 32-bit (long) value at the specified offset into the extra window memory.
-        /// </summary>
-        /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs..</param>
-        /// <param name="nIndex">The zero-based offset to the value to be set. Valid values are in the range zero through the number of bytes of extra window memory, minus the size of an integer. To set any other value, specify one of the following values: GWL_EXSTYLE, GWL_HINSTANCE, GWL_ID, GWL_STYLE, GWL_USERDATA, GWL_WNDPROC </param>
-        /// <param name="dwNewLong">The replacement value.</param>
-        /// <returns>If the function succeeds, the return value is the previous value of the specified 32-bit integer. 
-        /// If the function fails, the return value is zero. To get extended error information, call GetLastError. </returns>
-        [DllImport("user32.dll")]
-        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         enum WindowLongFlags : int
         {
             GWL_EXSTYLE = -20,
@@ -286,6 +202,23 @@ namespace WindowsFilter
             DWLP_MSGRESULT = 0x0,
             DWLP_DLGPROC = 0x4
         }
+
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("user32.dll")]
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")]
+        public static extern IntPtr PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")]
+        public static extern int SetForegroundWindow(IntPtr hWnd);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr SetFocus(IntPtr hWnd);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
+ 
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern int GetWindowLong(IntPtr hWnd, int nIndex);
@@ -314,7 +247,7 @@ namespace WindowsFilter
 
         List<Process> processList = new List<Process>();
 
-        
+
         /// <summary>
         /// find all visible windows process and store them to processlist 
         /// </summary>
@@ -337,10 +270,13 @@ namespace WindowsFilter
                 }
             }
             processList.Sort((a, b) => a.Id - b.Id);
-            /*EnumDelegate a = new EnumDelegate(enumProcessWithWindowsCallBack);
-            _enumWindows(a,IntPtr.Zero);*/
+
         }
 
+        /// <summary>
+        /// return the number of windows
+        /// </summary>
+        /// <returns></returns>
         public int getSize()
         {
             return processList.Count;
@@ -352,10 +288,8 @@ namespace WindowsFilter
             List<string> s = new List<string>();
             foreach (Process process in processList)
             {
-                //s.Add(string.Format("{0}", process.MainWindowTitle));
                 try
                 {
-
                     s.Add(string.Format("{0}:{1}", process.Id, process.MainWindowTitle));
                 }
                 catch
@@ -400,6 +334,12 @@ namespace WindowsFilter
 
 
         }
+        /// <summary>
+        /// set the window at given index full screen. 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="screen_dx">off-set to desktop in x</param>
+        /// <param name="screen_dy">off-set to desktop in y</param>
         public void setFullscreen(int index, int screen_dx, int screen_dy)
         {
             IntPtr handle = getHandle(index);

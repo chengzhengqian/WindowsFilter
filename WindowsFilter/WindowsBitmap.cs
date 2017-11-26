@@ -114,6 +114,9 @@ namespace WindowsFilter
 
 }
 
+/// <summary>
+/// declaration for a WinAPI Rect structure
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct RECT
 {
