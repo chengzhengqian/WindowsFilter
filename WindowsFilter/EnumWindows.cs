@@ -61,25 +61,25 @@ namespace WindowsFilter
         /// </summary>
         public enum SpecialWindowHandles
         {
-            
+
             HWND_TOP = 0,
-           
+
             HWND_BOTTOM = 1,
-           
+
             HWND_TOPMOST = -1,
-          
+
             HWND_NOTOPMOST = -2
-          
+
         }
 
         [Flags]
         public enum SetWindowPosFlags : uint
         {
-           
+
             SWP_ASYNCWINDOWPOS = 0x4000,
 
             SWP_DEFERERASE = 0x2000,
-    
+
             SWP_DRAWFRAME = 0x0020,
 
             SWP_FRAMECHANGED = 0x0020,
@@ -216,7 +216,7 @@ namespace WindowsFilter
         static extern IntPtr SetFocus(IntPtr hWnd);
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
- 
+
         [DllImport("user32.dll")]
         static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 

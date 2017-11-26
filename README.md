@@ -1,4 +1,4 @@
-# WindowsFilter
+WindowsFilter
 A program to read a background window content and display it with some graphic processing, like increase font boldness. Useful for users when use e-ink display to read pdf.
 
 
