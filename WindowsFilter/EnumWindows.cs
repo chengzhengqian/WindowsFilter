@@ -336,11 +336,13 @@ namespace WindowsFilter
         }
         /// <summary>
         /// set the window at given index full screen. 
+        /// the screen dx and dy is use zoom in or out the woring Area
+        /// 
         /// </summary>
         /// <param name="index"></param>
-        /// <param name="screen_dx">off-set to desktop in x</param>
-        /// <param name="screen_dy">off-set to desktop in y</param>
-        public void setFullscreen(int index, int screen_dx, int screen_dy)
+        /// <param name="screen_dx">scale to desktop in x</param>
+        /// <param name="screen_dy">scale to desktop in y</param>
+        public void setFullscreen(int index, int screen_dx, int screen_dy, int offset_dx=0,int offset_dy=0)
         {
             IntPtr handle = getHandle(index);
 
@@ -348,8 +350,8 @@ namespace WindowsFilter
             SetWindowLong(handle, (int)WindowLongFlags.GWL_STYLE, (style & ~((int)WindowStyles.WS_CAPTION) | (int)WindowStyles.WS_THICKFRAME));
             var screen = Screen.AllScreens[0];
             SetWindowPos(handle, (IntPtr)SpecialWindowHandles.HWND_BOTTOM,
-                screen.WorkingArea.Left - screen_dx,
-                screen.WorkingArea.Top - screen_dy,
+                screen.WorkingArea.Left - screen_dx+offset_dx,
+                screen.WorkingArea.Top - screen_dy+offset_dy,
                  screen.WorkingArea.Width + 2 * screen_dx,
                  screen.WorkingArea.Height + 2 * screen_dy,
              SetWindowPosFlags.SWP_DRAWFRAME);

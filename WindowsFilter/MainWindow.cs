@@ -86,6 +86,8 @@ namespace WindowsFilter
 
             label8.Text = String.Format("{0}", screen_dx);
             label9.Text = String.Format("{0}", screen_dy);
+            label15.Text = String.Format("{0}", screen_pos_dx);
+            label16.Text = String.Format("{0}", screen_pos_dy);
         }
         private void updateUI()
         {
@@ -253,12 +255,12 @@ namespace WindowsFilter
             timer1.Enabled = false;
         }
 
-        private void button13_Click(object sender, EventArgs e)
+        private void setFullScreen(object sender, EventArgs e)
         {
             if (selectedIndex >= 0 && selectedIndex < enumwindows.getSize())
             {
 
-                enumwindows.setFullscreen(selectedIndex,screen_dx,screen_dy);
+                enumwindows.setFullscreen(selectedIndex,screen_dx,screen_dy,screen_pos_dx,screen_pos_dy);
                 showTargetImage();
             }
         }
@@ -273,39 +275,69 @@ namespace WindowsFilter
 
         int screen_dx = 0;
         int screen_dy = 0;
-       
+        int screen_pos_dx = 0;
+        int screen_pos_dy = 0;
 
-        private void button16_Click(object sender, EventArgs e)
+        private void addScreenDx(object sender, EventArgs e)
         {
             if (screen_dx <100)
                 screen_dx = screen_dx + 1;
             updateLabels();
         }
 
-        private void button18_Click(object sender, EventArgs e)
+        private void decreaseScreenDx(object sender, EventArgs e)
         {
             if (screen_dx > 0)
                 screen_dx = screen_dx - 1;
             updateLabels();
         }
 
-        private void button15_Click(object sender, EventArgs e)
+        private void addScreenDy(object sender, EventArgs e)
         {
             if (screen_dy <100)
                 screen_dy = screen_dy + 1;
             updateLabels();
         }
 
-        private void button17_Click(object sender, EventArgs e)
+        private void decreaseScreenDy(object sender, EventArgs e)
         {
             if (screen_dy> 0)
                 screen_dy= screen_dy - 1;
             updateLabels();
         }
 
-        private void button19_Click(object sender, EventArgs e)
+        private void clearWindowsList(object sender, EventArgs e)
         {
             updateWindowsList(true);
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+            if (screen_pos_dx > 0)
+                screen_pos_dx = screen_pos_dx - 1;
+            updateLabels();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (screen_pos_dx < 100)
+                screen_pos_dx = screen_pos_dx + 1;
+            updateLabels();
+        }
+
+        private void button14_Click_1(object sender, EventArgs e)
+        {
+              if (screen_pos_dy> 0)
+                screen_pos_dy= screen_pos_dy - 1;
+            updateLabels();
+        
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (screen_pos_dy < 100)
+                screen_pos_dy = screen_pos_dy + 1;
+            updateLabels();
         }
     }
 }
